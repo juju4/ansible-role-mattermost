@@ -1,4 +1,5 @@
 ---
+
 - name: Create mattermost upstart init script
   template:
     src: init/upstart.j2

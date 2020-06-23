@@ -1,5 +1,6 @@
 ---
-- name: Create mattermost systemd service 
+
+- name: Create mattermost systemd service
   template:
     src: init/systemd.j2
     dest: /etc/systemd/system/mattermost.service

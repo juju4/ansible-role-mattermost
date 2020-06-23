@@ -1,4 +1,5 @@
 ---
+
 - name: Create mattermost SystemV init script
   template:
     src: init/systemv.j2

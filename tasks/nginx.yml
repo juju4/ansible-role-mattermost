@@ -17,7 +17,7 @@
   when: ansible_os_family == "RedHat"
 
 - name: Ensure nginx default configuration files are deleted
-  file: 
+  file:
     path: "{{ item }}"
     state: absent
   with_items:

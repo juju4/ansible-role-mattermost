@@ -10,7 +10,7 @@
       changed_when: false
     - name: Gather Facts
       setup:
-    
+
   roles:
     - { role: ansible-role-mattermost }
   vars:

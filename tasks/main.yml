@@ -7,22 +7,22 @@
 - include_tasks: postgres.yml
 
 - name: 'Download binary from https://releases.mattermost.org'
-  get_url: 
+  get_url:
     url: 'https://releases.mattermost.com/{{ mattermost_version }}/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz'
     dest: /tmp/
   when: use_get_url
 
 - name: Download binary from MatterMost website (using wget because get_url fails if system python is older than 2.7.5)
   command: "wget https://releases.mattermost.com/{{ mattermost_version }}/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz"
-  args:        
+  args:
     chdir: /tmp/
     creates: /tmp/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz
     warn: false
   when: not use_get_url
 
 - name: Unpack mattermost archive.
-  unarchive: 
-    src: /tmp/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz 
+  unarchive:
+    src: /tmp/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz
     dest: /opt/
     copy: no
   args:
@@ -40,13 +40,13 @@
 #    dest: /opt/mattermost/config/config.json
 #    regexp: '"DataSource":'
 #    line: '        "DataSource": "postgres://{{ db_user }}:{{ db_password }}@127.0.0.1:5432/{{ db_name }}?sslmode=disable&connect_timeout=10",'
-#    backrefs: yes 
+#    backrefs: yes
 
 - name: Create user to run mattermost service.
-  user: 
+  user:
     name: "{{ mattermost_user }}"
     system: yes
-    createhome: no        
+    createhome: no
 
 - name: Apply mattermost config.json template
   template:
@@ -55,7 +55,7 @@
     owner: "{{ mattermost_user }}"
     group: "{{ mattermost_user }}"
     mode: 0644
-  
+
 - name: Change mattermost directory permissions
   file:
     path: /opt/mattermost
@@ -65,7 +65,7 @@
     recurse: yes
 
 - include_tasks: "init/{{ init_system }}.yml"
- 
+
 - include_tasks: selinux.yml
   when: selinux_enable
   notify: restart nginx
@@ -74,7 +74,7 @@
   service:
     name: mattermost
     enabled: yes
-    state: started 
+    state: started
   notify: "restart services"
 
 # vim:ft=ansible:

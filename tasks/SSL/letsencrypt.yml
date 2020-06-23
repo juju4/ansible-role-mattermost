@@ -1,6 +1,7 @@
 ---
+
 - name: Create letsencrypt config file /etc/letsencrypt.ini
-  template: 
+  template:
     src: letsencrypt/cli.ini.j2
     dest: /etc/letsencrypt.ini
 
@@ -13,7 +14,7 @@
   service:
     name: nginx
     state: stopped
-  when: cert_present.stat.exists == false
+  when: not cert_present.stat.exists
 
 - name: Get SSL certificate from letsencrypt
   command: certbot certonly -c /etc/letsencrypt.ini -n --agree-tos
@@ -23,7 +24,7 @@
   when: not staging
 
 - name: Get SSL certificate from letsencrypt (Staging)
-  command: certbot certonly -c /etc/letsencrypt.ini -n --agree-tos --staging 
+  command: certbot certonly -c /etc/letsencrypt.ini -n --agree-tos --staging
   args:
     creates: /etc/letsencrypt/live/{{ ansible_fqdn }}/fullchain.pem
   notify: restart nginx
@@ -37,7 +38,9 @@
     month: "*"
     day: "15"
     job: "service nginx stop && /opt/letsencrypt/letsencrypt-auto renew --quiet --no-self-upgrade && service nginx start"
-  when: (ansible_os_family == "RedHat" and ansible_distribution_major_version == "6") or (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "14")
+  when: >
+    (ansible_os_family == "RedHat" and ansible_distribution_major_version == "6") or
+    (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "14")
 
 - name: Create cron job to automatically update SSL cert (systemd)
   cron:
@@ -47,5 +50,7 @@
     month: "*"
     day: "15"
     job: "systemctl stop nginx && /opt/letsencrypt/letsencrypt-auto renew --quiet --no-self-upgrade && systemctl start nginx"
-  when: (ansible_os_family == "RedHat" and ansible_distribution_major_version == "7") or (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16")
+  when: >
+    (ansible_os_family == "RedHat" and ansible_distribution_major_version == "7") or
+    (ansible_distribution == "Ubuntu" and ansible_distribution_major_version == "16")
 # vim:ft=ansible:
