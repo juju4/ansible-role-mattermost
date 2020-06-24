@@ -26,6 +26,8 @@
       - {type: host, database: all, user: all, address: '::1/128', auth_method: md5}
     hardenwebserver_disable_http: true
     mattermost_nginx_https_port: 8443
+    # for debug
+    postgres_users_no_log: false
   roles:
     - role: geerlingguy.postgresql
     - role: juju4.harden_nginx
