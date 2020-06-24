@@ -6,6 +6,7 @@
     - role: juju4.harden-nginx
     - role: juju4.mattermost
   pre_tasks:
-    - set_fact:
+    - name: Ubuntu Bionic+ | Enforce python3 for ansiblr
+      set_fact:
         ansible_python_interpreter: /usr/bin/python3
       when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
