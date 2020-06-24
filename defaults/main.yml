@@ -4,19 +4,17 @@
 # High Level Vars
 
 mattermost_version: 4.3.2
+#mattermost_version: 5.24.1
 db_user: mmost
 db_name: mattermost
 db_password: notReallyASecurePassword
-cert_email_address: abc@123.com
 mattermost_user: mattermost
 overwrite_config_file: "true"
-postgres_version: 9.4
 
-## Type of SSL you want. Acceptable values are: letsencrypt, snakeoil, none
-SSL_type: letsencrypt
-staging: false #Use when testing letsencrypt
+mattermost_ssl_certpath: "{{ ssl_dir }}/{{ ansible_fqdn }}.crt"
+mattermost_ssl_privatekey_path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.key"
+
 # MATTERMOST config.json SETTINGS
-
 Service_SiteURL: ""
 Service_LicenseFileLocation: ""
 Service_ListenAddress: ":8065"
@@ -111,6 +109,7 @@ Sql_DataSourceSearchReplicas: []
 Sql_MaxIdleConns: 20
 Sql_MaxOpenConns: 300
 Sql_Trace: "false"
+## FIXME!
 Sql_AtRestEncryptKey: "jksksj85pzbomhs3ockhrzynpgh8ox34"
 Sql_QueryTimeout: 30
 
@@ -136,6 +135,7 @@ File_MaxFileSize: 52428800
 File_DriverName: "local"
 File_Directory: "./data/"
 File_EnablePublicLink: "false"
+## FIXME!
 File_PublicLinkSalt: "ey3hcypcwwyqun3nok4dx5k3iiaepqda"
 File_InitialFont: "luximbi.ttf"
 File_AmazonS3AccessKeyId: ""
@@ -162,6 +162,7 @@ Email_SMTPPassword: ""
 Email_SMTPServer: ""
 Email_SMTPPort: ""
 Email_ConnectionSecurity: ""
+## FIXME!
 Email_InviteSalt: "du9bga69i1dknm8wnk8izgb4xm7py5gf"
 Email_SendPushNotifications: "false"
 Email_PushNotificationServer: ""

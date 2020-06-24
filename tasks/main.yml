@@ -4,8 +4,6 @@
 
 - include_tasks: nginx.yml
 
-- include_tasks: postgres.yml
-
 - name: 'Download binary from https://releases.mattermost.org'
   get_url:
     url: 'https://releases.mattermost.com/{{ mattermost_version }}/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz'
@@ -20,33 +18,21 @@
     warn: false
   when: not use_get_url
 
-- name: Unpack mattermost archive.
-  unarchive:
-    src: /tmp/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz
-    dest: /opt/
-    copy: no
-  args:
-    creates: /opt/mattermost/bin/platform
-
-#- name: Edit /opt/mattermost/config/config.json
-#  lineinfile:
-#    dest: /opt/mattermost/config/config.json
-#    regexp: '"DriverName": "mysql",'
-#    line: '        "DriverName": "postgres",'
-#    backrefs: yes
-
-#- name: Edit /opt/mattermost/config/config.json
-#  lineinfile:
-#    dest: /opt/mattermost/config/config.json
-#    regexp: '"DataSource":'
-#    line: '        "DataSource": "postgres://{{ db_user }}:{{ db_password }}@127.0.0.1:5432/{{ db_name }}?sslmode=disable&connect_timeout=10",'
-#    backrefs: yes
-
 - name: Create user to run mattermost service.
   user:
     name: "{{ mattermost_user }}"
     system: yes
     createhome: no
+
+- name: Unpack mattermost archive.
+  unarchive:
+    src: /tmp/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz
+    dest: /opt
+    owner: "{{ mattermost_user }}"
+    group: "{{ mattermost_user }}"
+    remote_src: true
+  args:
+    creates: /opt/mattermost/bin/platform
 
 - name: Apply mattermost config.json template
   template:
@@ -54,27 +40,31 @@
     dest: /opt/mattermost/config/config.json
     owner: "{{ mattermost_user }}"
     group: "{{ mattermost_user }}"
-    mode: 0644
+    mode: '0644'
+    backup: "{{ mattermost_backup | default('yes') }}"
+  notify:
+    - restart mattermost
 
-- name: Change mattermost directory permissions
-  file:
-    path: /opt/mattermost
-    state: directory
-    owner: "{{ mattermost_user }}"
-    group: "{{ mattermost_user }}"
-    recurse: yes
-
+- debug: var=ansible_service_mgr verbosity=1
+- debug: var=ansible_virtualization_type verbosity=1
+- name: Docker | use systemv as init system
+  set_fact:
+    init_system: systemv
+    mattermost_service_use: sysvinit
+  when: >
+    (ansible_virtualization_type is defined and (ansible_virtualization_type == "docker"))
+- debug: var=init_system verbosity=1
 - include_tasks: "init/{{ init_system }}.yml"
 
 - include_tasks: selinux.yml
   when: selinux_enable
-  notify: restart nginx
 
-- name: Enable Mattermost service
+- name: Ensure Mattermost service is enabled and started
   service:
     name: mattermost
     enabled: yes
     state: started
-  notify: "restart services"
+    use: "{{ mattermost_service_use | default('auto') }}"
+  changed_when: mattermost_idempotence_changedwhen | default(omit)
 
 # vim:ft=ansible:
