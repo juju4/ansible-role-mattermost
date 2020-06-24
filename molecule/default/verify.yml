@@ -1,0 +1,108 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  pre_tasks:
+  - name: install curl
+    package:
+      name: curl
+      state: present
+  tasks:
+  - name: Check if needed packages are installed
+    command: "dpkg-query -l {{ item }}"
+    changed_when: false
+    with_items:
+      - nginx
+      - postgresql
+  - name: Ensure mattermost/config/config.json file is present
+    stat:
+      path: /opt/mattermost/config/config.json
+    register: cfg
+  - name: Validate config present
+    assert:
+      that: cfg.stat.exists and cfg.stat.size != 0
+  - name: Ensure mattermost nginx config is enabled
+    stat:
+      #path: /etc/nginx/sites-enabled/mattermost.conf
+      path: /etc/nginx/conf.d/mattermost.conf
+    register: cfg2
+  - name: Validate config present
+    assert:
+      that: cfg2.stat.exists and cfg2.stat.size != 0
+  - name: Ensure process is running
+    command: pgrep -u mattermost platform
+    register: ps
+    changed_when: false
+  - name: Validate ps output
+    assert:
+      that: ps.stdout
+  - name: Ensure nginx ports are listening
+    wait_for:
+      host: localhost
+      port: "{{ item }}"
+    with_items:
+      - 443
+      - 8443
+  - name: Config validation
+    command: /opt/mattermost/bin/platform config validate -c /opt/mattermost/config/config.json
+    register: mconf
+    changed_when: false
+  # - name: Validate bbb-conf output
+  #   assert:
+  #     that: >
+  #       "'Failed to connect to bus: No such file or directory' not in bbbconf.stderr"
+  - name: Curl mattermost front page directly
+    uri:
+      url: http://localhost:8065
+      return_content: yes
+    register: url1
+    changed_when: false
+  - debug: var=url1
+  # FIXME!
+  - name: Validate mattermost web output
+    assert:
+      that: >
+        "'Cannot connect to Mattermost' not in url1.content"
+  - name: Curl mattermost front page via nginx
+    uri:
+      url: https://localhost:8443
+      validate_certs: no
+      return_content: yes
+    register: url2
+    changed_when: false
+  # FIXME!
+  - name: Validate mattermost web output
+    assert:
+      that: >
+        "'Cannot connect to Mattermost' not in url2.content"
+
+  - name: Get mattermost log file
+    slurp:
+      src: /opt/mattermost/logs/mattermost.log
+    register: logfile
+  - name: Ensure mattermost log file valid
+    assert:
+      that: >
+        "'ERROR' not in logfile['content'] | b64decode and 'Starting Server...' in logfile['content'] | b64decode"
+
+  - name: Ensure database is present
+    command: psql -c '\l'
+    become: yes
+    become_user: postgres
+    register: psql1
+    changed_when: false
+  - name: Validate mattermost db is present
+    assert:
+      that: >
+        "'mattermost' in psql1.stdout"
+  - name: Ensure tables are present
+    command: psql -c '\dt'
+    become: yes
+    become_user: postgres
+    register: psql1
+    changed_when: false
+  - name: Validate mattermost tables are present
+    assert:
+      that: >
+        "'useraccesstokens' in psql1.stdout and 'incomingwebhooks' in psql1.stdout"

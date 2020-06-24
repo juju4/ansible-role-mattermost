@@ -1,0 +1,52 @@
+---
+- name: Converge
+  hosts: all
+  environment:
+    http_proxy: "{{ lookup('env', 'http_proxy') }}"
+    https_proxy: "{{ lookup('env', 'https_proxy') }}"
+    no_proxy: "{{ lookup('env', 'no_proxy') }}"
+  vars:
+    db_user: mmost
+    db_name: mattermost
+    db_password: notReallyASecurePassword
+    postgresql_databases:
+      - name: "{{ db_name }}"
+        lc_collate: C.UTF-8
+    postgresql_users:
+      - name: "{{ db_user }}"
+        password: "{{ db_password }}"
+        db: "{{ db_name }}"
+        priv: ALL
+        role_attr_flags: NOSUPERUSER,NOCREATEDB
+    postgresql_hba_entries:
+      - {type: local, database: all, user: postgres, auth_method: peer}
+      #- {type: local, database: all, user: all, auth_method: peer}
+      - {type: local, database: all, user: all, auth_method: trust}
+      - {type: host, database: all, user: all, address: '127.0.0.1/32', auth_method: md5}
+      - {type: host, database: all, user: all, address: '::1/128', auth_method: md5}
+    hardenwebserver_disable_http: true
+    mattermost_nginx_https_port: 8443
+  roles:
+    - role: geerlingguy.postgresql
+    - role: juju4.harden-nginx
+  pre_tasks:
+    - name: Install python3
+      raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3-minimal)
+      register: python3
+      changed_when: "'installed' in python3.stdout"
+      when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
+    - name: Gather Facts
+      setup:
+      when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
+    - set_fact:
+        ansible_python_interpreter: /usr/bin/python3
+      when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
+    - set_fact:
+        # docker & systemd...
+        mattermost_idempotence_changedwhen: false
+      when: >
+        (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 20)
+  tasks:
+    - name: "Include mattermost"
+      include_role:
+        name: "juju4.mattermost"
