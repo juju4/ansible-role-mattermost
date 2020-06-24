@@ -1,10 +1,4 @@
 ---
-- src: tjtoml.postgresql
-  version: v1.0.0
-
-- src: tjtoml.nginx
-  version: v1.0.1
-
-- src: tjtoml.letsencrypt
-  version: v1.0.0
 #vim:ft=ansible:
+- src: geerlingguy.postgresql
+- src: juju4.harden-nginx
