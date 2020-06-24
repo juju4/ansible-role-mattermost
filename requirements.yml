@@ -1,4 +1,5 @@
 ---
 #vim:ft=ansible:
-- src: geerlingguy.postgresql
+- name: geerlingguy.postgresql
+  src: https://github.com/juju4/ansible-role-postgresql
 - src: juju4.harden_nginx
