@@ -32,6 +32,7 @@
       - { p: "/etc/ssl/private", perm: rx }
       - { p: "/etc/ssl/private/{{ ansible_fqdn }}.key", perm: r }
       - { p: "/var/log/nginx", perm: rwx }
+      - { p: "/var/cache/nginx", perm: rwx }
     mattermost_nginx_https_port: 8443
     # for debug
     postgres_users_no_log: false
