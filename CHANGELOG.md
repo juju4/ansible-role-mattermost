@@ -7,7 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Molecule test suite
+- Molecule test suite - limitations docker+systemd
+- Kitchen test suite (lxd based)
 - Test, support Ubuntu 18.04, 20.04, Centos 8
 
 ### Changed
