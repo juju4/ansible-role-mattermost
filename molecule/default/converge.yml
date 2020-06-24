@@ -12,10 +12,10 @@
     postgresql_databases:
       - name: "{{ db_name }}"
         lc_collate: C.UTF-8
+        owner: "{{ db_user }}"
     postgresql_users:
       - name: "{{ db_user }}"
         password: "{{ db_password }}"
-        db: "{{ db_name }}"
         priv: ALL
         role_attr_flags: NOSUPERUSER,NOCREATEDB
     postgresql_hba_entries:
