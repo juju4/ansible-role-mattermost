@@ -1,38 +1,27 @@
 ---
-sudo: required
-dist: trusty
-
 language: python
-python: "2.7"
+services: docker
 
-# Doc: https://docs.travis-ci.com/user/customizing-the-build#Build-Matrix
 env:
-  - ANSIBLE_VERSION=latest
-branches:
-  only:
-    - master
+  global:
+    - MOLECULE_NO_LOG: "false"
+  matrix:
+    - MOLECULE_DISTRO: ubuntu:20.04
+    - MOLECULE_DISTRO: ubuntu:18.04
+    - MOLECULE_DISTRO: ubuntu:16.04
+    - MOLECULE_DISTRO: centos:8
+    - MOLECULE_DISTRO: centos:7
 
-before_install:
-  - sudo apt-get update -qq
 install:
-  # Install Ansible.
-  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible; else pip install ansible==$ANSIBLE_VERSION; fi
-  - if [ "$ANSIBLE_VERSION" = "latest" ]; then pip install ansible-lint; fi
-  - echo '[defaults]'>>ansible.cfg
-  - echo 'roles_path = /home/travis/build/tjtoml'>>ansible.cfg  
-  - echo 'allow_world_readable_tmpfiles = true'>>ansible.cfg
-  - ansible-galaxy install -r requirements.yml
+  # Install test dependencies.
+  - pip install molecule docker ansible-lint flake8 testinfra
+
+before_script:
+  - cd ../ && mv ansible-role-mattermost juju4.mattermost
+  - cd juju4.mattermost
+
 script:
-  # Check the role/playbook's syntax.
-  - ansible-playbook -i tests/inventory tests/test.yml --syntax-check
-
-  # Run the role/playbook with ansible-playbook.
-  - ansible-playbook -i tests/inventory tests/test.yml -vvvv --skip-tags update,copy_host_ssh_id
-
-  - "ansible-playbook -i tests/inventory tests/test.yml | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)"
-
-  - "curl 127.0.0.1>got.html && diff got.html tests/expected.html"
+  - molecule test
 
 notifications:
-  email: false
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
