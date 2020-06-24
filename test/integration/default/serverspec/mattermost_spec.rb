@@ -47,3 +47,17 @@ describe command('psql -c \'\\dt\' mattermost') do
   its(:stderr) { should_not match /No such file or directory/ }
   its(:exit_status) { should eq 0 }
 end
+
+describe command('curl -v http://localhost:8065') do
+  its(:stdout) { should match /mattermost/ }
+  its(:stdout) { should_not match /Cannot connect to Mattermost/ }
+  its(:stderr) { should_not match /No such file or directory/ }
+  its(:exit_status) { should eq 0 }
+end
+describe command('curl -vk http://localhost:8443') do
+  its(:stdout) { should match /mattermost/ }
+  its(:stdout) { should_not match /Cannot connect to Mattermost/ }
+  its(:stderr) { should match /TLS/ }
+  its(:stderr) { should_not match /No such file or directory/ }
+  its(:exit_status) { should eq 0 }
+end
