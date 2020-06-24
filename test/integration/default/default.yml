@@ -25,6 +25,13 @@
       - {type: host, database: all, user: all, address: '127.0.0.1/32', auth_method: md5}
       - {type: host, database: all, user: all, address: '::1/128', auth_method: md5}
     hardenwebserver_disable_http: true
+    hardenwebserver_systemd_files_acl:
+      - { p: /etc/letsencrypt/archive, perm: rx }
+      - { p: /etc/letsencrypt/live, perm: rx }
+      #- { p: "/etc/letsencrypt/archive/{{ ansible_fqdn }}/privkey1.pem", perm: r }
+      - { p: "/etc/ssl/private", perm: rx }
+      - { p: "/etc/ssl/private/{{ ansible_fqdn }}.key", perm: r }
+      - { p: "/var/log/nginx", perm: rwx }
     mattermost_nginx_https_port: 8443
     # for debug
     postgres_users_no_log: false
