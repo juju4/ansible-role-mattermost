@@ -26,8 +26,8 @@
       - {type: host, database: all, user: all, address: '::1/128', auth_method: md5}
     hardenwebserver_disable_http: true
     hardenwebserver_systemd_files_acl:
-      - { p: /etc/letsencrypt/archive, perm: rx }
-      - { p: /etc/letsencrypt/live, perm: rx }
+      #- { p: /etc/letsencrypt/archive, perm: rx }
+      #- { p: /etc/letsencrypt/live, perm: rx }
       #- { p: "/etc/letsencrypt/archive/{{ ansible_fqdn }}/privkey1.pem", perm: r }
       - { p: "/etc/ssl/private", perm: rx }
       - { p: "/etc/ssl/private/{{ ansible_fqdn }}.key", perm: r }
