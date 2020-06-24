@@ -3,7 +3,7 @@
   hosts: all
   roles:
     - role: geerlingguy.postgresql
-    - role: juju4.harden-nginx
+    - role: juju4.harden_nginx
     - role: juju4.mattermost
   pre_tasks:
     - name: Ubuntu Bionic+ | Enforce python3 for ansiblr

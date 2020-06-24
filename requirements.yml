@@ -1,4 +1,4 @@
 ---
 #vim:ft=ansible:
 - src: geerlingguy.postgresql
-- src: juju4.harden-nginx
+- src: juju4.harden_nginx
