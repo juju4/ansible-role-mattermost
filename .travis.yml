@@ -19,6 +19,7 @@ install:
 before_script:
   - cd ../ && mv ansible-role-mattermost juju4.mattermost
   - cd juju4.mattermost
+  - ansible-galaxy install -p .. -r requirements.yml
 
 script:
   - molecule test
