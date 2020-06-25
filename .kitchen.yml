@@ -19,6 +19,7 @@ provisioner:
   ansible_extra_flags: <%= ENV['ANSIBLE_EXTRA_FLAGS'] %>
   ansible_cfg_path: test/ansible.cfg
   require_ansible_omnibus: true
+  require_chef_omnibus: false
 #  require_chef_for_busser: false
   enable_yum_epel: true
   ansible_connection: ssh
