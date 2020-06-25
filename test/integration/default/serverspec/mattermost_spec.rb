@@ -34,13 +34,13 @@ describe file('/opt/mattermost/logs/mattermost.log') do
   it { should_not contain 'ERROR' }
 end
 
-describe command('sudo -u postgres psql -c \'\\l\'') do
+describe command('sudo -u postgres -H psql -c \'\\l\'') do
   its(:stdout) { should match /mattermost/ }
   its(:stderr) { should match /^$/ }
   its(:stderr) { should_not match /No such file or directory/ }
   its(:exit_status) { should eq 0 }
 end
-describe command('sudo -u postgres psql -c \'\\dt\' mattermost') do
+describe command('sudo -u postgres -H psql -c \'\\dt\' mattermost') do
   its(:stdout) { should match /useraccesstokens/ }
   its(:stdout) { should match /incomingwebhooks/ }
   its(:stderr) { should match /^$/ }
