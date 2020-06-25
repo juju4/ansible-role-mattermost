@@ -9,6 +9,8 @@
     db_user: mmost
     db_name: mattermost
     db_password: notReallyASecurePassword
+    mattermost_nginx_http_port: 8080
+    mattermost_nginx_https_port: 8443
     postgresql_databases:
       - name: "{{ db_name }}"
         lc_collate: C.UTF-8
@@ -34,7 +36,6 @@
       - { p: "/etc/ssl/private/{{ ansible_fqdn }}.key", perm: r }
       - { p: "/var/log/nginx", perm: rwx }
       - { p: "/var/cache/nginx", perm: rwx }
-    mattermost_nginx_https_port: 8443
     # for debug
     postgres_users_no_log: false
   roles:
@@ -46,11 +47,11 @@
       raw: test -e /usr/bin/python3 || (apt -y update && apt install -y python3-minimal)
       register: python3
       changed_when: "'installed' in python3.stdout"
-      when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 16)
+      when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
     - name: Gather Facts
       setup:
-      when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 16)
+      when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
     - name: Ubuntu Bionic+ | Enforce python3 for ansiblr
       set_fact:
         ansible_python_interpreter: /usr/bin/python3
-      when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 16)
+      when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
