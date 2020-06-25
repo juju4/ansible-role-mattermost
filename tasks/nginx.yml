@@ -1,13 +1,11 @@
 ---
 
-- name: Change nginx cache directory permissions
+- name: Validate nginx cache directory permissions
   file:
     path: /var/cache/nginx
     state: directory
-    owner: nginx
-    group: nginx
-    recurse: yes
-  when: ansible_os_family == "RedHat"
+    owner: "{% if ansible_os_family == 'RedHat' %}nginx{% else %}www-data{% endif %}"
+    group: "{% if ansible_os_family == 'RedHat' %}nginx{% else %}www-data{% endif %}"
 
 - name: Apply nginx config template
   template:
