@@ -37,6 +37,7 @@ end
 describe command('psql -c \'\\l\'') do
   let(:sudo_options) { '-u postgres' }
   its(:stdout) { should match /mattermost/ }
+  its(:stderr) { should match /^$/ }
   its(:stderr) { should_not match /No such file or directory/ }
   its(:exit_status) { should eq 0 }
 end
@@ -44,19 +45,20 @@ describe command('psql -c \'\\dt\' mattermost') do
   let(:sudo_options) { '-u postgres' }
   its(:stdout) { should match /useraccesstokens/ }
   its(:stdout) { should match /incomingwebhooks/ }
+  its(:stderr) { should match /^$/ }
   its(:stderr) { should_not match /No such file or directory/ }
   its(:exit_status) { should eq 0 }
 end
 
 describe command('curl -v http://localhost:8065') do
-  its(:stdout) { should match /mattermost/ }
-  its(:stdout) { should_not match /Cannot connect to Mattermost/ }
+  its(:stdout) { should match /Mattermost/ }
+  # its(:stdout) { should_not match /Cannot connect to Mattermost/ }
   its(:stderr) { should_not match /No such file or directory/ }
   its(:exit_status) { should eq 0 }
 end
-describe command('curl -vk http://localhost:8443') do
-  its(:stdout) { should match /mattermost/ }
-  its(:stdout) { should_not match /Cannot connect to Mattermost/ }
+describe command('curl -vk https://localhost:8443') do
+  its(:stdout) { should match /Mattermost/ }
+  # its(:stdout) { should_not match /Cannot connect to Mattermost/ }
   its(:stderr) { should match /TLS/ }
   its(:stderr) { should_not match /No such file or directory/ }
   its(:exit_status) { should eq 0 }
