@@ -1,13 +1,19 @@
 [Unit]
 Description=Mattermost
-After=syslog.target network.target postgresql.service
+After=network.target
+After=postgresql.service
+Requires=postgresql.service
 
 [Service]
-Type=simple
-WorkingDirectory=/opt/mattermost/bin
-User={{ mattermost_user }}
+Type=notify
 ExecStart=/opt/mattermost/bin/mattermost
-PIDFile=/var/spool/mattermost/pid/master.pid
+TimeoutStartSec=3600
+Restart=always
+RestartSec=10
+WorkingDirectory=/opt/mattermost
+User=mattermost
+Group=mattermost
+LimitNOFILE=49152
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=postgresql.service
