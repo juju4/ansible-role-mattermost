@@ -55,3 +55,9 @@
       set_fact:
         ansible_python_interpreter: /usr/bin/python3
       when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 18)
+    - name: Centos7 | Postgres Locale
+      set_fact:
+        postgresql_databases:
+          - name: "{{ db_name }}"
+            lc_collate: en_US.UTF-8
+      when: (ansible_os_family == "RedHat" and ansible_distribution_major_version|int == 7)
