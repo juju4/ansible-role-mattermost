@@ -31,7 +31,7 @@
     assert:
       that: cfg2.stat.exists and cfg2.stat.size != 0
   - name: Ensure process is running
-    command: pgrep -u mattermost platform
+    command: pgrep -u mattermost mattermost
     register: ps
     changed_when: false
   - name: Validate ps output

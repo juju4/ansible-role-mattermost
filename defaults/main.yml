@@ -3,8 +3,9 @@
 
 # High Level Vars
 
-mattermost_version: 4.3.2
-#mattermost_version: 5.24.1
+mattermost_version: 5.24.2
+mattermost_url: "https://releases.mattermost.com/{{ mattermost_version }}/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz"
+mattermost_checksum: "sha256:f6624fe431b604ace34e375f3459907a02b12a1573ad53af181d205f5bacea4d"
 db_user: mmost
 db_name: mattermost
 db_password: notReallyASecurePassword

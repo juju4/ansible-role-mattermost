@@ -8,7 +8,7 @@ describe service('mattermost') do
   it { should be_running }
 end
 
-describe process("platform") do
+describe process("mattermost") do
   it { should be_running }
   its(:user) { should eq 'mattermost' }
   its(:count) { should eq 1 }

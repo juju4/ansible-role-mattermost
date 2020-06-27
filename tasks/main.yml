@@ -4,17 +4,19 @@
 
 - include_tasks: nginx.yml
 
-- name: 'Download binary from https://releases.mattermost.org'
+- name: 'Download mattermost binary'
   get_url:
-    url: 'https://releases.mattermost.com/{{ mattermost_version }}/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz'
+    url: "{{ mattermost_url }}"
     dest: /tmp/
+    mode: '0644'
+    checksum: "{{ mattermost_checksum }}"
   when: use_get_url
 
-- name: Download binary from MatterMost website (using wget because get_url fails if system python is older than 2.7.5)
-  command: "wget https://releases.mattermost.com/{{ mattermost_version }}/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz"
+- name: Download mattermost binary (using wget because get_url fails if system python is older than 2.7.5)
+  command: "wget \"{{ mattermost_url }}\""
   args:
     chdir: /tmp/
-    creates: /tmp/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz
+    creates: "/tmp/{{ mattermost_url | basename }}"
     warn: false
   when: not use_get_url
 
@@ -26,7 +28,7 @@
 
 - name: Unpack mattermost archive.
   unarchive:
-    src: /tmp/mattermost-team-{{ mattermost_version }}-linux-amd64.tar.gz
+    src: "/tmp/{{ mattermost_url | basename }}"
     dest: /opt
     owner: "{{ mattermost_user }}"
     group: "{{ mattermost_user }}"
