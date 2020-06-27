@@ -12,7 +12,7 @@ jobs:
         - ansible-lint tasks/main.yml || true
       after_script: true
     - stage: deploy
-      name: Deploy on Ubuntu Xenial
+      name: Deploy on Ubuntu 20.04
       env:
         - distribution: ubuntu
           version: 20.04
