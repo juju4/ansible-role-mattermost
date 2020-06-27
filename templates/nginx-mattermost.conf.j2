@@ -12,7 +12,11 @@ server {
 }
 
 server {
+{% if (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int <= 16) %}
+   listen {{ mattermost_nginx_https_port | default('443') }} ssl;
+{% else %}
    listen {{ mattermost_nginx_https_port | default('443') }} ssl http2;
+{% endif %}
    server_name    {{ ansible_fqdn }};
 
    ssl on;
