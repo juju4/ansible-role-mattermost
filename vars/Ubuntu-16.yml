@@ -1,4 +1,7 @@
 ---
 init_system: systemd
 use_get_url: true
+
+ssl_dir: /etc/ssl
+ssl_privatedir: /etc/ssl/private
 #vim:ft=ansible:
