@@ -27,6 +27,7 @@
       - {type: host, database: all, user: all, address: '127.0.0.1/32', auth_method: md5}
       - {type: host, database: all, user: all, address: '::1/128', auth_method: md5}
     hardenwebserver_disable_http: true
+    hardenwebserver_header_csp: "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline'; frame-ancestors 'none'; upgrade-insecure-requests;"
     hardenwebserver_nginx_systemd_hardening: false
     hardenwebserver_systemd_files_acl:
       #- { p: /etc/letsencrypt/archive, perm: rx }
