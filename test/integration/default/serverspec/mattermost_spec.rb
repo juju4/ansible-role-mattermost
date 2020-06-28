@@ -78,14 +78,14 @@ describe command('curl -v http://localhost:8065') do
 end
 describe command('curl -vk https://localhost:8443') do
   its(:stdout) { should match /Mattermost/ }
-  its(:stdout) { should_not match /Cannot connect to Mattermost/ }
+  its(:stdout) { should match /Cannot connect to Mattermost/ }
   its(:stderr) { should match /TLS/ }
   its(:stderr) { should_not match /No such file or directory/ }
   its(:exit_status) { should eq 0 }
 end
 describe command('curl -vk https://localhost:8443/login') do
   its(:stdout) { should match /Mattermost/ }
-  its(:stdout) { should_not match /Cannot connect to Mattermost/ }
+  its(:stdout) { should match /Cannot connect to Mattermost/ }
   its(:stderr) { should match /TLS/ }
   its(:stderr) { should_not match /No such file or directory/ }
   its(:exit_status) { should eq 0 }
