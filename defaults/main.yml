@@ -16,8 +16,8 @@ mattermost_cli: /opt/mattermost/bin/mattermost
 ## mmctl will require 'auth login'
 #mattermost_cli: /opt/mattermost/bin/mmctl
 mattermost_users:
-  - { firstname: JoeADM, email: joeADM@example.com, username: joe_adm, password: Password1, admin: true }
-  - { firstname: Joe, email: joe@example.com, username: joe, password: Password1 }
+  - { firstname: JoeADM, email: joeADM@example.com, username: joe_adm, password: Password123456, admin: true }
+  - { firstname: Joe, email: joe@example.com, username: joe, password: Password123456 }
 mattermost_invite_users: []
 #  - { email: user@example.com, teams: 'myteam1 myteam2' }
 mattermost_teams:
