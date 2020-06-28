@@ -143,7 +143,7 @@ Log_FileLocation: ""
 Log_EnableWebhookDebugging: "true"
 Log_EnableDiagnostics: "true"
 
-Password_MinimumLength: 5
+Password_MinimumLength: 14
 Password_Lowercase: "false"
 Password_Number: "false"
 Password_Uppercase: "false"
