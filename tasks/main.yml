@@ -61,6 +61,12 @@
 - include_tasks: selinux.yml
   when: selinux_enable
 
+- name: Symlink log directory to /var/log
+  file:
+    src: /opt/mattermost/logs
+    dest: /var/log/mattermost
+    state: link
+
 - name: Ensure Mattermost service is enabled and started
   service:
     name: mattermost
