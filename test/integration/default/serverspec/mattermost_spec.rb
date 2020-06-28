@@ -44,20 +44,48 @@ end
 describe command('sudo -u postgres psql -c \'\\dt\' mattermost') do
   its(:stdout) { should match /useraccesstokens/ }
   its(:stdout) { should match /incomingwebhooks/ }
-  #its(:stderr) { should match /^$/ }
+  its(:stderr) { should_not match /No such file or directory/ }
+  its(:exit_status) { should eq 0 }
+end
+
+describe command('sudo -u mattermost /opt/mattermost/bin/mattermost user search joe') do
+  its(:stdout) { should match /username: joe/ }
+  its(:stdout) { should match /email: joe@example.com/ }
+  its(:stderr) { should_not match /No such file or directory/ }
+  its(:exit_status) { should eq 0 }
+end
+describe command('sudo -u mattermost /opt/mattermost/bin/mattermost team list') do
+  its(:stdout) { should match /myteam/ }
+  its(:stdout) { should match /private/ }
+  its(:stdout) { should match /8soyabwthjnf9qibfztje5a36h/ }
+  its(:stderr) { should_not match /No such file or directory/ }
+  its(:exit_status) { should eq 0 }
+end
+describe command('sudo -u mattermost /opt/mattermost/bin/mattermost channel list myteam') do
+  its(:stdout) { should match /mynewchannel/ }
+  its(:stdout) { should match /mynewprivatechannel \(private\)/ }
+  its(:stdout) { should match /town-square/ }
   its(:stderr) { should_not match /No such file or directory/ }
   its(:exit_status) { should eq 0 }
 end
 
 describe command('curl -v http://localhost:8065') do
   its(:stdout) { should match /Mattermost/ }
-  # its(:stdout) { should_not match /Cannot connect to Mattermost/ }
+  ## below content is expect if no javascript
+  its(:stdout) { should match /Cannot connect to Mattermost/ }
   its(:stderr) { should_not match /No such file or directory/ }
   its(:exit_status) { should eq 0 }
 end
 describe command('curl -vk https://localhost:8443') do
   its(:stdout) { should match /Mattermost/ }
-  # its(:stdout) { should_not match /Cannot connect to Mattermost/ }
+  its(:stdout) { should_not match /Cannot connect to Mattermost/ }
+  its(:stderr) { should match /TLS/ }
+  its(:stderr) { should_not match /No such file or directory/ }
+  its(:exit_status) { should eq 0 }
+end
+describe command('curl -vk https://localhost:8443/login') do
+  its(:stdout) { should match /Mattermost/ }
+  its(:stdout) { should_not match /Cannot connect to Mattermost/ }
   its(:stderr) { should match /TLS/ }
   its(:stderr) { should_not match /No such file or directory/ }
   its(:exit_status) { should eq 0 }

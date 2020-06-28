@@ -12,6 +12,26 @@ db_password: notReallyASecurePassword
 mattermost_user: mattermost
 overwrite_config_file: "true"
 
+mattermost_cli: /opt/mattermost/bin/mattermost
+## mmctl will require 'auth login'
+#mattermost_cli: /opt/mattermost/bin/mmctl
+mattermost_users:
+  - { firstname: JoeADM, email: joeADM@example.com, username: joe_adm, password: Password1, admin: true }
+  - { firstname: Joe, email: joe@example.com, username: joe, password: Password1 }
+mattermost_invite_users: []
+#  - { email: user@example.com, teams: 'myteam1 myteam2' }
+mattermost_teams:
+  - { name: myteam, displayname: "My New Team" }
+  - { name: private, displayname: "My New Private Team", private: true }
+  - { name: 8soyabwthjnf9qibfztje5a36h, displayname: "My Random team" }
+mattermost_channels:
+  - { team: myteam, channel: mynewchannel, channeldisplayname: "My New Channel" }
+  - { team: myteam, channel: mynewprivatechannel, channeldisplayname: "My New Private Channel", private: true }
+mattermost_channels_users:
+  - { name: 'myteam:mynewchannel', useremail: joeADM@example.com, username: joe_adm }
+  - { name: 'myteam:mynewprivatechannel', useremail: joeADM@example.com, username: joe_adm }
+  - { name: 'myteam:mynewchannel', useremail: user@example.com, username: username }
+
 mattermost_ssl_certpath: "{{ ssl_dir }}/{{ ansible_fqdn }}.crt"
 mattermost_ssl_privatekey_path: "{{ ssl_privatedir }}/{{ ansible_fqdn }}.key"
 

@@ -1,0 +1,70 @@
+---
+# https://docs.mattermost.com/administration/command-line-tools.html
+
+- name: Create users
+  command: >
+    {{ mattermost_cli }} user create --firstname "{{ item.firstname }}"{% if item.admin | default(false) %} --system_admin{% endif %} --email "{{ item.email }}" --username "{{ item.username }}" --password "{{ item.password }}"
+  with_items: "{{ mattermost_users }}"
+  become: yes
+  become_user: "{{ mattermost_user }}"
+  args:
+    chdir: /opt/mattermost
+  register: out
+  changed_when: >
+    "'id: ' in out.stdout and 'username: ' in out.stdout and 'An account with that username already exists.' not in out.stderr"
+  failed_when: >
+    "out.rc != 0 and 'An account with that username already exists.' not in out.stderr"
+  # FIXME! need to review failed_when
+  ignore_errors: true
+
+- name: Invite users
+  command: >
+    {{ mattermost_cli }} user create --firstname "{{ item.firstname }}" --system_admin --email "{{ item.email }}" --username "{{ item.username }}" --password "{{ item.password }}"
+  with_items: "{{ mattermost_invite_users }}"
+  become: yes
+  become_user: "{{ mattermost_user }}"
+  args:
+    chdir: /opt/mattermost
+
+- name: Create teams
+  command: >
+    {{ mattermost_cli }} team create --name "{{ item.name }}" --display_name "{{ item.displayname }}"{% if item.private | default(false) %} --private{% endif %}
+  with_items: "{{ mattermost_teams }}"
+  become: yes
+  become_user: "{{ mattermost_user }}"
+  args:
+    chdir: /opt/mattermost
+  register: out
+  changed_when: >
+    "out.rc == 0 and 'A team with that name already exists., id=' not in out.stderr"
+  failed_when: >
+    "out.rc != 0 and 'A team with that name already exists., id=' not in out.stderr"
+  # FIXME! need to review failed_when
+  ignore_errors: true
+
+- name: Create channels
+  command: >
+    {{ mattermost_cli }} channel create --team "{{ item.team }}" --name "{{ item.channel }}" --display_name "{{ item.channeldisplayname }}"{% if item.private | default(false) %} --private{% endif %}
+  with_items: "{{ mattermost_channels }}"
+  become: yes
+  become_user: "{{ mattermost_user }}"
+  args:
+    chdir: /opt/mattermost
+  register: out
+  changed_when: >
+    "'Id: ' in out.stdout and 'username: ' in out.stdout and ' A channel with that name already exists on the same team' not in out.stderr"
+  failed_when: >
+    "out.rc != 0 and ' A channel with that name already exists on the same team' not in out.stderr"
+  # FIXME! need to review failed_when
+  ignore_errors: true
+
+- name: Add users to channels
+  command: >
+    {{ mattermost_cli }} channel add "{{ item.name }}" "{{ item.useremail }}" "{{ item.username }}"
+  with_items: "{{ mattermost_channels_users }}"
+  become: yes
+  become_user: "{{ mattermost_user }}"
+  args:
+    chdir: /opt/mattermost
+  # FIXME! need to review failed_when
+  ignore_errors: true

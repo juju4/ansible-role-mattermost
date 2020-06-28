@@ -75,4 +75,6 @@
     use: "{{ mattermost_service_use | default('auto') }}"
   changed_when: mattermost_idempotence_changedwhen | default(omit)
 
+- include_tasks: postconfig.yml
+
 # vim:ft=ansible:
