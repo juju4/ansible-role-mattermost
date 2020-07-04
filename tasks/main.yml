@@ -20,11 +20,18 @@
     warn: false
   when: not use_get_url
 
+- name: Create mattermost group
+  group:
+    name: "{{ mattermost_user }}"
+    state: present
+
 - name: Create user to run mattermost service.
   user:
     name: "{{ mattermost_user }}"
+    group: "{{ mattermost_user }}"
     system: yes
     createhome: no
+    home: "/opt/mattermost"
 
 - name: Unpack mattermost archive.
   unarchive:
@@ -73,7 +80,6 @@
     enabled: yes
     state: started
     use: "{{ mattermost_service_use | default('auto') }}"
-  changed_when: mattermost_idempotence_changedwhen | default(omit)
 
 - include_tasks: postconfig.yml
 

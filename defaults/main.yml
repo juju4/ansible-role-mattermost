@@ -110,7 +110,7 @@ Team_RestrictPrivateChannelManageMembers: "all"
 Team_EnableXToLeaveChannelsFromLHS: "false"
 Team_UserStatusAwayTimeout: 300
 Team_MaxChannelsPerTeam: 2000
-Team_MaxNotificationsPerChannel: 1000
+Team_MaxNotificationsPerChannel: 1000000
 Team_EnableConfirmNotificationsToChannel: "true"
 Team_TeammateNameDisplay: "username"
 Team_ExperimentalTownSquareIsReadOnly: "false"
@@ -177,6 +177,7 @@ Email_RequireEmailVerification: "true"
 Email_FeedbackName: ""
 Email_FeedbackEmail: ""
 Email_FeedbackOrganization: ""
+# https://docs.mattermost.com/install/smtp-email-setup.html
 Email_EnableSMTPAuth: "false"
 Email_SMTPUsername: ""
 Email_SMTPPassword: ""

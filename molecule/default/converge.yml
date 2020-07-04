@@ -44,12 +44,6 @@
       set_fact:
         ansible_python_interpreter: /usr/bin/python3
       when: (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 16)
-    - name: Docker | workaround as no systemd
-      set_fact:
-        # docker & systemd...
-        mattermost_idempotence_changedwhen: false
-      when: >
-        (ansible_distribution == "Ubuntu" and ansible_distribution_major_version|int >= 20)
   tasks:
     - name: "Include mattermost"
       include_role:

@@ -17,15 +17,6 @@
   # FIXME! need to review failed_when
   ignore_errors: true
 
-- name: Invite users
-  command: >
-    {{ mattermost_cli }} user create --firstname "{{ item.firstname }}" --system_admin --email "{{ item.email }}" --username "{{ item.username }}" --password "{{ item.password }}"
-  with_items: "{{ mattermost_invite_users }}"
-  become: yes
-  become_user: "{{ mattermost_user }}"
-  args:
-    chdir: /opt/mattermost
-
 - name: Create teams
   command: >
     {{ mattermost_cli }} team create --name "{{ item.name }}" --display_name "{{ item.displayname }}"{% if item.private | default(false) %} --private{% endif %}
@@ -41,6 +32,16 @@
     "out.rc != 0 and 'A team with that name already exists., id=' not in out.stderr"
   # FIXME! need to review failed_when
   ignore_errors: true
+
+# FIXME! command always returning 'Invites may or may not have been sent.'...
+- name: Invite users
+  command: >
+    {{ mattermost_cli }} user invite "{{ item.email }}" {{ item.teams }}
+  with_items: "{{ mattermost_invite_users }}"
+  become: yes
+  become_user: "{{ mattermost_user }}"
+  args:
+    chdir: /opt/mattermost
 
 - name: Create channels
   command: >
